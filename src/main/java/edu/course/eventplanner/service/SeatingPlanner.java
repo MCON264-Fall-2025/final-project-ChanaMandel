@@ -6,5 +6,5 @@ import java.util.*;
 public class SeatingPlanner {
     private final Venue venue;
     public SeatingPlanner(Venue venue) { this.venue = venue; }
-    public Map<Integer, List<Guest>> generateSeating(List<Guest> guests) { return null; }
+    public Map<Integer, List<Guest>> generateSeating(List<Guest> guests) { return null; /*TODO*/}
 }
