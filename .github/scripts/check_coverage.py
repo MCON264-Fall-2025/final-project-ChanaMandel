@@ -27,21 +27,11 @@ def check_coverage():
 
     print(f"Code Coverage: {coverage_percentage:.2f}%")
 
-    # Check for student test files
-    test_count = 0
-    for package in root.findall('.//package'):
-        for sourcefile in package.findall('.//sourcefile'):
-            filename = sourcefile.get('name', '')
-            if filename.endswith('Test.java') and not filename.startswith('Venue') and not filename.startswith('Guest') and not filename.startswith('Seating') and not filename.startswith('Task'):
-                test_count += 1
-
-    print(f"Student test files found: {test_count}")
-
-    if coverage_percentage >= 60 and test_count >= 3:
+    if coverage_percentage >= 80 :
         print("✅ Coverage and test requirements met")
         sys.exit(0)
     else:
-        print("❌ Insufficient coverage or test files")
+        print("❌ Insufficient coverage. Should be more then 80%")
         sys.exit(1)
 
 if __name__ == '__main__':
