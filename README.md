@@ -360,26 +360,6 @@ java -cp bin edu.course.eventplanner.User
 
 ---
 
-## Key Implementation Rules
-
-### Critical: Guest List Management
-**ALL guests must be added using the `addGuest()` method:**
-
-```java
-// ✅ CORRECT
-List<Guest> generated = Generators.GenerateGuests(50);
-for (Guest g : generated) {
-    guestManager.addGuest(g);
-}
-
-// ❌ WRONG - Direct assignment not allowed
-guests = Generators.GenerateGuests(50);
-```
-
-**Why:** The LinkedList is the source of truth, and the HashMap must stay synchronized. The `addGuest()` method ensures both structures are updated together.
-
----
-
 ## Performance Characteristics Summary
 
 | Operation | Data Structure | Time Complexity | Space Complexity |
@@ -403,42 +383,4 @@ guests = Generators.GenerateGuests(50);
 5. **Testability** - Pure logic classes with no I/O dependencies
 6. **Clear Contracts** - Method signatures match autograder requirements exactly
 
----
-
-## Grading Rubric Alignment
-
-| Component | Points | Implementation |
-|-----------|--------|----------------|
-| Venue selection logic | 15 | ✅ Filtering, sorting, tie-breaking implemented |
-| Guest management | 20 | ✅ LinkedList + HashMap with all operations |
-| Seating algorithm | 25 | ✅ Grouping, queues, BST (TreeMap) |
-| Task workflow and undo | 10 | ✅ Queue (FIFO) + Stack (LIFO) |
-| Unit tests | 15 | ✅ Comprehensive coverage of all classes |
-| Autograding compatibility | 10 | ✅ All required method signatures present |
-| README explanations | 5 | ✅ This document |
-| **Total** | **100** | |
-
----
-
-## Future Enhancements
-
-- Guest preference-based seating (requests for specific table-mates)
-- Priority queue for urgent tasks
-- Dynamic venue availability checking
-- Dietary restrictions tracking
-- Budget breakdown with itemized costs
-- Export seating chart to PDF/CSV
-
----
-
-## Author Notes
-
-This implementation prioritizes:
-- **Correctness** - Meets all assignment requirements
-- **Clarity** - Code is readable and well-documented
-- **Testability** - All core logic is unit tested
-- **Efficiency** - Appropriate data structures for each use case
-- **Maintainability** - Clean separation of concerns
-
-**Time to Complete:** Approximately 3-4 hours as specified in assignment guidelines.
 
