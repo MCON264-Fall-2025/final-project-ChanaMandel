@@ -14,13 +14,13 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class User {
-    private static Scanner scanner = new Scanner(System.in);
-    private static GuestListManager guestManager = new GuestListManager();
-    private static VenueSelector venueSelector;
-    private static SeatingPlanner seatingPlanner;
-    private static TaskManager taskManager = new TaskManager();
-    private static Venue selectedVenue;
-    private static Map<Integer, List<Guest>> seatingChart;
+    static Scanner scanner = new Scanner(System.in);
+    public static GuestListManager guestManager = new GuestListManager();
+    public static VenueSelector venueSelector;
+    public static SeatingPlanner seatingPlanner;
+    public static TaskManager taskManager = new TaskManager();
+    public static Venue selectedVenue;
+    public static Map<Integer, List<Guest>> seatingChart;
 
     public static void main(String[] args) {
         System.out.println("=== Event Planning System ===\n");
@@ -72,7 +72,7 @@ public class User {
         scanner.close();
     }
 
-    private static void printMenu() {
+    public static void printMenu() {
         System.out.println("--- Main Menu ---");
         System.out.println("1. Load sample data");
         System.out.println("2. Add guest");
@@ -86,9 +86,7 @@ public class User {
         System.out.println("0. Exit");
     }
 
-    private static void loadSampleData() {
-        System.out.print("How many guests to generate? ");
-        int numGuests = getIntInput("");
+    public static void loadSampleDataWithCount(int numGuests) {
 
         // Generate venues using helper
         List<Venue> venues = Generators.generateVenues();
@@ -110,6 +108,18 @@ public class User {
         System.out.println("Added 4 sample preparation tasks.");
     }
 
+    private static void loadSampleData() {
+        System.out.print("How many guests to generate? ");
+        int numGuests = getIntInput("");
+        loadSampleDataWithCount(numGuests);
+    }
+
+    public static void addGuestWithDetails(String name, String groupTag) {
+        Guest guest = new Guest(name, groupTag);
+        guestManager.addGuest(guest);
+        System.out.println("Guest '" + name + "' added successfully.");
+    }
+
     private static void addGuest() {
         System.out.print("Guest name: ");
         String name = scanner.nextLine();
@@ -117,37 +127,33 @@ public class User {
         System.out.print("Group tag (family/friends/neighbors/coworkers): ");
         String groupTag = scanner.nextLine();
 
-        Guest guest = new Guest(name, groupTag);
-        guestManager.addGuest(guest);
-
-        System.out.println("Guest '" + name + "' added successfully.");
+        addGuestWithDetails(name, groupTag);
     }
 
-    private static void removeGuest() {
-        System.out.print("Guest name to remove: ");
-        String name = scanner.nextLine();
-
+    public static boolean removeGuestByName(String name) {
         boolean removed = guestManager.removeGuest(name);
-
         if (removed) {
             System.out.println("Guest '" + name + "' removed successfully.");
         } else {
             System.out.println("Guest '" + name + "' not found.");
         }
+        return removed;
     }
 
-    private static void selectVenue() {
+
+    private static void removeGuest() {
+        System.out.print("Guest name to remove: ");
+        String name = scanner.nextLine();
+        removeGuestByName(name);
+    }
+
+    public static Venue selectVenueWithBudget(double budget, int guestCount) {
         if (venueSelector == null) {
             System.out.println("Please load sample data first to get venues.");
-            return;
+            return null;
         }
 
-        System.out.print("Enter your budget: $");
-        double budget = getDoubleInput("");
-
-        int guestCount = guestManager.getGuestCount();
         System.out.println("Current guest count: " + guestCount);
-
         selectedVenue = venueSelector.selectVenue(budget, guestCount);
 
         if (selectedVenue != null) {
@@ -160,17 +166,25 @@ public class User {
         } else {
             System.out.println("No venue found within budget and capacity constraints.");
         }
+        return selectedVenue;
     }
 
-    private static void generateSeatingChart() {
+    private static void selectVenue() {
+        System.out.print("Enter your budget: $");
+        double budget = getDoubleInput("");
+        int guestCount = guestManager.getGuestCount();
+        selectVenueWithBudget(budget, guestCount);
+    }
+
+    public static Map<Integer, List<Guest>> generateSeatingChartForGuests() {
         if (selectedVenue == null) {
             System.out.println("Please select a venue first.");
-            return;
+            return null;
         }
 
         if (guestManager.getGuestCount() == 0) {
             System.out.println("No guests to seat. Please add guests first.");
-            return;
+            return null;
         }
 
         seatingPlanner = new SeatingPlanner(selectedVenue);
@@ -185,19 +199,26 @@ public class User {
         }
 
         System.out.println("\nTotal tables used: " + seatingChart.size());
+        return seatingChart;
+    }
+
+    private static void generateSeatingChart() {
+        generateSeatingChartForGuests();
+    }
+
+    public static void addPreparationTaskWithDescription(String description) {
+        Task task = new Task(description);
+        taskManager.addTask(task);
+        System.out.println("Task added. Remaining tasks: " + taskManager.remainingTaskCount());
     }
 
     private static void addPreparationTask() {
         System.out.print("Task description: ");
         String description = scanner.nextLine();
-
-        Task task = new Task(description);
-        taskManager.addTask(task);
-
-        System.out.println("Task added. Remaining tasks: " + taskManager.remainingTaskCount());
+        addPreparationTaskWithDescription(description);
     }
 
-    private static void executeNextTask() {
+    public static Task executeNextTask() {
         Task task = taskManager.executeNextTask();
 
         if (task != null) {
@@ -206,9 +227,10 @@ public class User {
         } else {
             System.out.println("No tasks to execute.");
         }
+        return  task;
     }
 
-    private static void undoLastTask() {
+    public static Task undoLastTask() {
         Task task = taskManager.undoLastTask();
 
         if (task != null) {
@@ -217,9 +239,10 @@ public class User {
         } else {
             System.out.println("No tasks to undo.");
         }
+        return  task;
     }
 
-    private static void printEventSummary() {
+    public static void printEventSummary() {
         System.out.println("=== Event Summary ===\n");
 
         System.out.println("Guests: " + guestManager.getGuestCount());
@@ -241,6 +264,15 @@ public class User {
         System.out.println("\nTasks:");
         System.out.println("  Remaining: " + taskManager.remainingTaskCount());
         System.out.println("  Completed: " + taskManager.completedTaskCount());
+    }
+
+    public static void resetForTesting() {
+        guestManager = new GuestListManager();
+        venueSelector = null;
+        seatingPlanner = null;
+        taskManager = new TaskManager();
+        selectedVenue = null;
+        seatingChart = null;
     }
 
     private static int getIntInput(String prompt) {
