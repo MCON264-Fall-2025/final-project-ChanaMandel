@@ -95,8 +95,7 @@ public class User {
         venueSelector = new VenueSelector(venues);
         System.out.println("Loaded " + venues.size() + " sample venues.");
 
-        // Generate guests using helper and add via addGuest (REQUIRED)
-        // NOTE: Use GenerateGuests (capital G) to match your Generators.java
+        // Generate guests using helper and add via addGuest
         List<Guest> generatedGuests = Generators.GenerateGuests(numGuests);
         for (Guest g : generatedGuests) {
             guestManager.addGuest(g);
